@@ -1,10 +1,19 @@
 <script>
 	import FaStopwatch from 'svelte-icons/fa/FaStopwatch.svelte';
-	import { mean, median, round } from 'mathjs';
+	import { mean, median } from 'mathjs';
+	import millify from 'millify';
 
 	export let a = () => {};
 	export let b = () => {};
 	export let executionsToTime = 10;
+
+	function sec(value, precision) {
+		return millify(value, {
+			precision: precision,
+			units: ['ms', 's'],
+			space: true
+		});
+	}
 
 	const stats = [
 		{
@@ -26,19 +35,31 @@
 			label: 'Median',
 			a: '???',
 			b: '???'
+		},
+		{
+			label: `Total (${millify(executionsToTime)})`,
+			a: '???',
+			b: '???'
 		}
 	];
 	function loadTimingData() {
+		const startA = performance.now();
 		const resultsA = getExecutionTimes(a);
+		const endA = performance.now();
+
+		const startB = performance.now();
 		const resultsB = getExecutionTimes(b);
-		stats[0].a = `${round(Math.min(...resultsA), 4)} ms`;
-		stats[0].b = `${round(Math.min(...resultsB), 4)} ms`;
-		stats[1].a = `${round(Math.max(...resultsA), 4)} ms`;
-		stats[1].b = `${round(Math.max(...resultsB), 4)} ms`;
-		stats[2].a = `${round(mean(...resultsA), 4)} ms`;
-		stats[2].b = `${round(mean(...resultsB), 4)} ms`;
-		stats[3].a = `${round(median(...resultsA), 4)} ms`;
-		stats[3].b = `${round(median(...resultsB), 4)} ms`;
+		const endB = performance.now();
+		stats[0].a = `${sec(Math.min(...resultsA), 4)}`;
+		stats[0].b = `${sec(Math.min(...resultsB), 4)}`;
+		stats[1].a = `${sec(Math.max(...resultsA), 4)}`;
+		stats[1].b = `${sec(Math.max(...resultsB), 4)}`;
+		stats[2].a = `${sec(mean(...resultsA), 4)}`;
+		stats[2].b = `${sec(mean(...resultsB), 4)}`;
+		stats[3].a = `${sec(median(...resultsA), 4)}`;
+		stats[3].b = `${sec(median(...resultsB), 4)}`;
+		stats[4].a = `${sec(endA - startA, 4)}`;
+		stats[4].b = `${sec(endB - startB, 4)}`;
 	}
 
 	function getExecutionTimes(fn) {

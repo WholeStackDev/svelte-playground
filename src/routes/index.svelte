@@ -15,7 +15,7 @@
 			if (remainingAmount === 0) break;
 		}
 		console.log(remainingAmount === 0 ? coinsUsed : -1);
-		wait(100);
+		wait(2);
 		return remainingAmount === 0 ? coinsUsed : -1;
 	}
 	function b() {
@@ -34,4 +34,4 @@
 	}
 </script>
 
-<LeetRaceUI {a} {b} />
+<LeetRaceUI {a} {b} executionsToTime={1000} />
